@@ -4,7 +4,7 @@ const express = require('express')
 const cors = require('cors');
 const SSLCommerzPayment = require('sslcommerz-lts');
 const app = express()
-const port = process.env.port || 3000
+const port = process.env.port || 5000
 
 app.use(express.json());
 app.use(cors());
@@ -93,8 +93,8 @@ app.post('/myPayment/:id', async (req, res) => {
     total_amount: paymentData.totalRent,
     currency: 'BDT',
     tran_id: trans_id, // use unique tran_id for each api call
-    success_url: `http://localhost:3000/payment/success/${trans_id}`,
-    fail_url: `http://localhost:3000/fail/${trans_id}`,
+    success_url: `http://localhost:5000/payment/success/${trans_id}`,
+    fail_url: `http://localhost:5000/fail/${trans_id}`,
     cancel_url: 'http://localhost:3030/cancel',
     ipn_url: 'http://localhost:3030/ipn',
     shipping_method: 'Courier',
@@ -233,6 +233,23 @@ app.get('/getRole', async (req, res) => {
 
   res.send(role);
 });
+
+app.patch('/updateRole/:id', async (req, res) => {
+  const id = req.params.id;
+  const role = req.body.role;
+
+  console.log(id, role);
+  
+
+  const updatedRole = req.body.role;
+  const filter = { _id: new ObjectId(id) };
+  const updateDoc = {
+    $set: { role: updatedRole }
+  };
+  const result = await userCollection.updateOne(filter, updateDoc);
+  res.send(result);
+
+})
 
 app.get('/getId', async (req, res) => {
   const email = req.query.email;
